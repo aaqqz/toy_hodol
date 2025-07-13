@@ -26,7 +26,7 @@ public class Post {
         this.content = content;
     }
 
-    public static Post from(PostCreateServiceRequest request) {
+    public static Post of(PostCreateServiceRequest request) {
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())

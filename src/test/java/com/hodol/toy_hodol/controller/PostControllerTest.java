@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+
 @AutoConfigureMockMvc
 @SpringBootTest
 //@WebMvcTest(controllers = PostController.class)
@@ -36,11 +38,11 @@ class PostControllerTest {
 
     @BeforeEach
     void clean() {
-        postRepository.deleteAll();
+        postRepository.deleteAllInBatch();
     }
 
     @Test
-    @DisplayName("/posts 요청시 title 은 필수다")
+    @DisplayName("등록 요청시 title 은 필수")
     void post_title_required() throws Exception {
         // given
         PostCreateRequest postCreate = PostCreateRequest.builder()
@@ -59,7 +61,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 content 은 필수다")
+    @DisplayName("등록 요청시 content 은 필수")
     void post_content_required() throws Exception {
         // given
         PostCreateRequest postCreate = PostCreateRequest.builder()
@@ -78,7 +80,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청시 DB에 값이 저장된다")
+    @DisplayName("등록 요청시 DB에 값이 저장")
     void post_create() throws Exception {
         // given
         PostCreateRequest postCreate = PostCreateRequest.builder()
@@ -92,15 +94,73 @@ class PostControllerTest {
                         .content(objectMapper.writeValueAsString(postCreate))
                 )
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("BAD_REQUEST"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목은 필수입니다."));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("내용"));
 
-        // then
         Assertions.assertThat(1L).isEqualTo(postRepository.count());
+    }
 
-        Post post = postRepository.findAll().get(0);
-        Assertions.assertThat(post.getTitle()).isEqualTo(postCreate.getTitle());
-        Assertions.assertThat(post.getContent()).isEqualTo(postCreate.getContent());
+    @Test
+    @DisplayName("단건 조회")
+    void post_get() throws Exception {
+        // given
+        Post savedPost = createPost("제목", "내용");
+        postRepository.save(savedPost);
+
+        // expectation
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", savedPost.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("내용"));
+
+        Assertions.assertThat(1L).isEqualTo(postRepository.count());
+    }
+
+    @Test
+    @DisplayName("다건 조회")
+    void post_getList() throws Exception {
+        // given
+        Post post1 = createPost("제목_1", "내용_1");
+        Post post2 = createPost("제목_2", "내용_2");
+        Post post3 = createPost("제목_3", "내용_3");
+        Post post4 = createPost("제목_4", "내용_4");
+        List<Post> postList = List.of(post1, post2, post3, post4);
+        postRepository.saveAll(postList);
+
+
+        // expectation
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.length()").value(4))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].title").value("제목_1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].content").value("내용_1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].title").value("제목_2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].content").value("내용_2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].id").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].title").value("제목_4"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].content").value("내용_4"))
+        ;
+
+        Assertions.assertThat(4L).isEqualTo(postRepository.count());
+    }
+
+    public Post createPost(String title, String content) {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .build();
     }
 }
