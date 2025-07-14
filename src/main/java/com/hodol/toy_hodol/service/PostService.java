@@ -6,9 +6,9 @@ import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
 import com.hodol.toy_hodol.service.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -28,11 +28,9 @@ public class PostService {
         return PostResponse.of(post);
     }
 
-    public List<PostResponse> getList() {
-        List<Post> postList = postRepository.findAll();
+    public Page<PostResponse> getPageList(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAll(pageable);
+        return postPage.map(PostResponse::of);
 
-        return postList.stream()
-                .map(PostResponse::of)
-                .toList();
     }
 }

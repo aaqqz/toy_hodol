@@ -10,8 +10,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -66,28 +71,34 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 다건 조회")
-    void getList() {
+    @DisplayName("글 1페이지 조회")
+    void getPageList() {
         // given
-        Post post1 = createPost("제목1", "내용1");
-        Post post2 = createPost("제목2", "내용2");
-        Post post3 = createPost("제목3", "내용3");
-        Post post4 = createPost("제목4", "내용4");
-        List<Post> postList = List.of(post1, post2, post3, post4);
+        List<Post> postList = IntStream.range(1, 31)
+                .mapToObj(i -> createPost("제목" + i, "내용" + i))
+                .toList();
         postRepository.saveAll(postList);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
 
         // when
-        List<PostResponse> postResponseList = postService.getList();
+        Page<PostResponse> postPage = postService.getPageList(pageable);
 
         // then
-        Assertions.assertThat(postResponseList).hasSize(4)
+        Assertions.assertThat(postPage.getContent()).hasSize(10)
                 .extracting("title", "content")
                 .containsExactlyInAnyOrder(
-                        tuple("제목1", "내용1"),
-                        tuple("제목2", "내용2"),
-                        tuple("제목3", "내용3"),
-                        tuple("제목4", "내용4")
+                        tuple("제목30", "내용30"),
+                        tuple("제목29", "내용29"),
+                        tuple("제목28", "내용28"),
+                        tuple("제목27", "내용27"),
+                        tuple("제목26", "내용26"),
+                        tuple("제목25", "내용25"),
+                        tuple("제목24", "내용24"),
+                        tuple("제목23", "내용23"),
+                        tuple("제목22", "내용22"),
+                        tuple("제목21", "내용21")
                 );
+        Assertions.assertThat(30L).isEqualTo(postPage.getTotalElements());
     }
 
     public Post createPost(String title, String content) {

@@ -9,3 +9,8 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true # pageable starts at 1 instead of 0
