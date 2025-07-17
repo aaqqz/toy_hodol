@@ -29,8 +29,7 @@ public class PostService {
     }
 
     public Page<PostResponse> getPageList(Pageable pageable) {
-        Page<Post> postPage = postRepository.findAll(pageable);
+        Page<Post> postPage = postRepository.getPageList(pageable);
         return postPage.map(PostResponse::of);
-
     }
 }

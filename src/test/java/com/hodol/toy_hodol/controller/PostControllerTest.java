@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -125,36 +126,59 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("다건 조회")
-    void post_getList() throws Exception {
+    @DisplayName("페이지 조회_page1")
+    void post_getPageList_page1() throws Exception {
         // given
-        Post post1 = createPost("제목_1", "내용_1");
-        Post post2 = createPost("제목_2", "내용_2");
-        Post post3 = createPost("제목_3", "내용_3");
-        Post post4 = createPost("제목_4", "내용_4");
-        List<Post> postList = List.of(post1, post2, post3, post4);
+        List<Post> postList = IntStream.range(1, 21)
+                .mapToObj(i -> createPost("제목_" + i, "내용_" + i))
+                .toList();
         postRepository.saveAll(postList);
 
-
         // expectation
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=1&size=5&sort=id,desc")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.length()").value(4))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].title").value("제목_1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].content").value("내용_1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].title").value("제목_2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].content").value("내용_2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].id").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].title").value("제목_4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[3].content").value("내용_4"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content.length()").value(5))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("제목_20"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].content").value("내용_20"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].title").value("제목_16"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].content").value("내용_16"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages").value(4))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements").value(20))
         ;
 
-        Assertions.assertThat(4L).isEqualTo(postRepository.count());
+        Assertions.assertThat(20L).isEqualTo(postRepository.count());
+    }
+
+    @Test
+    @DisplayName("페이지 조회_page2")
+    void post_getPageList_page2() throws Exception {
+        // given
+        List<Post> postList = IntStream.range(1, 21)
+                .mapToObj(i -> createPost("제목_" + i, "내용_" + i))
+                .toList();
+        postRepository.saveAll(postList);
+
+        // expectation
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts?page=2&size=5&sort=id,desc")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content.length()").value(5))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("제목_15"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].content").value("내용_15"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].title").value("제목_11"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].content").value("내용_11"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages").value(4))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements").value(20))
+        ;
+
+        Assertions.assertThat(20L).isEqualTo(postRepository.count());
     }
 
     public Post createPost(String title, String content) {

@@ -72,33 +72,54 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 1페이지 조회")
-    void getPageList() {
+    void getPageList_1page() {
         // given
-        List<Post> postList = IntStream.range(1, 31)
+        List<Post> postList = IntStream.range(1, 21)
                 .mapToObj(i -> createPost("제목" + i, "내용" + i))
                 .toList();
         postRepository.saveAll(postList);
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
 
         // when
         Page<PostResponse> postPage = postService.getPageList(pageable);
 
         // then
-        Assertions.assertThat(postPage.getContent()).hasSize(10)
+        Assertions.assertThat(postPage.getContent()).hasSize(5)
                 .extracting("title", "content")
                 .containsExactlyInAnyOrder(
-                        tuple("제목30", "내용30"),
-                        tuple("제목29", "내용29"),
-                        tuple("제목28", "내용28"),
-                        tuple("제목27", "내용27"),
-                        tuple("제목26", "내용26"),
-                        tuple("제목25", "내용25"),
-                        tuple("제목24", "내용24"),
-                        tuple("제목23", "내용23"),
-                        tuple("제목22", "내용22"),
-                        tuple("제목21", "내용21")
+                        tuple("제목20", "내용20"),
+                        tuple("제목19", "내용19"),
+                        tuple("제목18", "내용18"),
+                        tuple("제목17", "내용17"),
+                        tuple("제목16", "내용16")
                 );
-        Assertions.assertThat(30L).isEqualTo(postPage.getTotalElements());
+        Assertions.assertThat(20L).isEqualTo(postPage.getTotalElements());
+    }
+
+    @Test
+    @DisplayName("글 2페이지 조회")
+    void getPageList_2page() {
+        // given
+        List<Post> postList = IntStream.range(1, 21)
+                .mapToObj(i -> createPost("제목" + i, "내용" + i))
+                .toList();
+        postRepository.saveAll(postList);
+        Pageable pageable = PageRequest.of(1, 5, Sort.Direction.DESC, "id");
+
+        // when
+        Page<PostResponse> postPage = postService.getPageList(pageable);
+
+        // then
+        Assertions.assertThat(postPage.getContent()).hasSize(5)
+                .extracting("title", "content")
+                .containsExactlyInAnyOrder(
+                        tuple("제목15", "내용15"),
+                        tuple("제목14", "내용14"),
+                        tuple("제목13", "내용13"),
+                        tuple("제목12", "내용12"),
+                        tuple("제목11", "내용11")
+                );
+        Assertions.assertThat(20L).isEqualTo(postPage.getTotalElements());
     }
 
     public Post createPost(String title, String content) {

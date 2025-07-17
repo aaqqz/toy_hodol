@@ -10,7 +10,8 @@ spring:
     username: sa
     password:
 
-  data:
-    web:
-      pageable:
-        one-indexed-parameters: true # pageable starts at 1 instead of 0
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
