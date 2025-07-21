@@ -2,6 +2,7 @@ package com.hodol.toy_hodol.controller;
 
 import com.hodol.toy_hodol.common.response.ApiResponse;
 import com.hodol.toy_hodol.controller.request.PostCreateRequest;
+import com.hodol.toy_hodol.controller.request.PostEditRequest;
 import com.hodol.toy_hodol.service.PostService;
 import com.hodol.toy_hodol.service.response.PostResponse;
 import jakarta.validation.Valid;
@@ -32,5 +33,10 @@ public class PostController {
     @GetMapping
     public ApiResponse<Page<PostResponse>> getPageList(Pageable pageable) {
         return ApiResponse.success(postService.getPageList(pageable));
+    }
+
+    @PatchMapping("/{postId}")
+    public ApiResponse<PostResponse> edit(@PathVariable Long postId, @RequestBody @Valid PostEditRequest request) {
+        return ApiResponse.success(postService.edit(postId, request.toServiceRequest()));
     }
 }

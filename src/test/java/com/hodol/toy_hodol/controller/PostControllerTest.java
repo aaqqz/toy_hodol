@@ -3,6 +3,7 @@ package com.hodol.toy_hodol.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodol.toy_hodol.Repository.PostRepository;
 import com.hodol.toy_hodol.controller.request.PostCreateRequest;
+import com.hodol.toy_hodol.controller.request.PostEditRequest;
 import com.hodol.toy_hodol.domain.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @AutoConfigureMockMvc
@@ -150,7 +152,7 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements").value(20))
         ;
 
-        Assertions.assertThat(20L).isEqualTo(postRepository.count());
+        Assertions.assertThat(postRepository.count()).isEqualTo(20L);
     }
 
     @Test
@@ -175,10 +177,33 @@ class PostControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].title").value("제목_11"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[4].content").value("내용_11"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages").value(4))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements").value(20))
-        ;
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements").value(20));
 
-        Assertions.assertThat(20L).isEqualTo(postRepository.count());
+        Assertions.assertThat(postRepository.count()).isEqualTo(20L);
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void postTitleEdit() throws Exception {
+        // given
+        Post post = createPost("제목", "내용");
+        postRepository.save(post);
+
+        PostEditRequest editRequest = PostEditRequest.builder()
+                .title("제목_수정")
+                .content("내용_수정")
+                .build();
+
+        // expectation
+        mockMvc.perform(MockMvcRequestBuilders.patch("/posts/{postId}", post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(editRequest))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목_수정"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("내용_수정"));
     }
 
     public Post createPost(String title, String content) {

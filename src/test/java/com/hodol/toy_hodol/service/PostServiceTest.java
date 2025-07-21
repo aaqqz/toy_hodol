@@ -3,6 +3,7 @@ package com.hodol.toy_hodol.service;
 import com.hodol.toy_hodol.Repository.PostRepository;
 import com.hodol.toy_hodol.domain.Post;
 import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
+import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
 import com.hodol.toy_hodol.service.response.PostResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,9 +49,9 @@ class PostServiceTest {
 
         // then
         Assertions.assertThat(postResponse.getId()).isNotNull();
-        Assertions.assertThat(1L).isEqualTo(postRepository.count());
-        Assertions.assertThat("제목").isEqualTo(postResponse.getTitle());
-        Assertions.assertThat("내용").isEqualTo(postResponse.getContent());
+        Assertions.assertThat(postRepository.count()).isEqualTo(1L);
+        Assertions.assertThat(postResponse.getTitle()).isEqualTo("제목");
+        Assertions.assertThat(postResponse.getContent()).isEqualTo("내용");
     }
 
     @Test
@@ -65,9 +66,9 @@ class PostServiceTest {
 
         // then
         Assertions.assertThat(postResponse.getId()).isNotNull();
-        Assertions.assertThat(1L).isEqualTo(postRepository.count());
-        Assertions.assertThat("제목").isEqualTo(postResponse.getTitle());
-        Assertions.assertThat("내용").isEqualTo(postResponse.getContent());
+        Assertions.assertThat(postRepository.count()).isEqualTo(1L);
+        Assertions.assertThat(postResponse.getTitle()).isEqualTo("제목");
+        Assertions.assertThat(postResponse.getContent()).isEqualTo("내용");
     }
 
     @Test
@@ -93,7 +94,7 @@ class PostServiceTest {
                         tuple("제목17", "내용17"),
                         tuple("제목16", "내용16")
                 );
-        Assertions.assertThat(20L).isEqualTo(postPage.getTotalElements());
+        Assertions.assertThat(postPage.getTotalElements()).isEqualTo(20L);
     }
 
     @Test
@@ -119,7 +120,74 @@ class PostServiceTest {
                         tuple("제목12", "내용12"),
                         tuple("제목11", "내용11")
                 );
-        Assertions.assertThat(20L).isEqualTo(postPage.getTotalElements());
+        Assertions.assertThat(postPage.getTotalElements()).isEqualTo(20L);
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void postTitleEdit() {
+        // given
+        Post post = createPost("제목1", "내용1");
+        postRepository.save(post);
+
+        PostEditServiceRequest request = PostEditServiceRequest.builder()
+                .title("제목_변경")
+                .build();
+
+        // when
+        postService.edit(post.getId(), request);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
+        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용1");
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void postContentEdit() {
+        // given
+        Post post = createPost("제목1", "내용1");
+        postRepository.save(post);
+
+        PostEditServiceRequest request = PostEditServiceRequest.builder()
+                .content("내용_변경")
+                .build();
+
+        // when
+        postService.edit(post.getId(), request);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
+    }
+
+    @Test
+    @DisplayName("글 제목,내용 수정")
+    void postTitleAndContentEdit() {
+        // given
+        Post post = createPost("제목1", "내용1");
+        postRepository.save(post);
+
+        PostEditServiceRequest request = PostEditServiceRequest.builder()
+                .title("제목_변경")
+                .content("내용_변경")
+                .build();
+
+        // when
+        postService.edit(post.getId(), request);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
+        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
     }
 
     public Post createPost(String title, String content) {
