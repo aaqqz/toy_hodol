@@ -1,6 +1,8 @@
 package com.hodol.toy_hodol.service;
 
-import com.hodol.toy_hodol.Repository.PostRepository;
+import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.common.exception.CustomException;
+import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.domain.Post;
 import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
 import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
@@ -36,7 +38,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 작성")
+    @DisplayName("게시글 등록")
     void create() {
         // given
         PostCreateServiceRequest request = PostCreateServiceRequest.builder()
@@ -55,7 +57,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 단건 조회")
+    @DisplayName("게시글 단건 조회")
     void get() {
         // given
         Post post = createPost("제목", "내용");
@@ -72,7 +74,21 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 1페이지 조회")
+    @DisplayName("게시글 단건 조회_실패")
+    void get_fail() {
+        // given
+        Post post = createPost("제목", "내용");
+        postRepository.save(post);
+
+        // excepted
+        Assertions.assertThatThrownBy(() -> postService.get(post.getId() + 1L))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 글입니다.")
+                .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);;
+    }
+
+    @Test
+    @DisplayName("게시글 1페이지 조회")
     void getPageList_1page() {
         // given
         List<Post> postList = IntStream.range(1, 21)
@@ -98,7 +114,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 2페이지 조회")
+    @DisplayName("게시글 2페이지 조회")
     void getPageList_2page() {
         // given
         List<Post> postList = IntStream.range(1, 21)
@@ -124,10 +140,10 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 제목 수정")
-    void postTitleEdit() {
+    @DisplayName("게시글 제목 수정")
+    void editPostTitle() {
         // given
-        Post post = createPost("제목1", "내용1");
+        Post post = createPost("제목", "내용");
         postRepository.save(post);
 
         PostEditServiceRequest request = PostEditServiceRequest.builder()
@@ -142,14 +158,32 @@ class PostServiceTest {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
         Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
-        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용1");
+        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용");
     }
 
     @Test
-    @DisplayName("글 내용 수정")
-    void postContentEdit() {
+    @DisplayName("게시글 제목 수정_실패")
+    void editPostTitle_fail() {
         // given
-        Post post = createPost("제목1", "내용1");
+        Post post = createPost("제목", "내용");
+        postRepository.save(post);
+
+        PostEditServiceRequest request = PostEditServiceRequest.builder()
+                .title("제목_변경")
+                .build();
+
+        // excepted
+        Assertions.assertThatThrownBy(() -> postService.edit(post.getId() + 1L, request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 글입니다.")
+                .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("게시글 내용 수정")
+    void editPostContent() {
+        // given
+        Post post = createPost("제목", "내용");
         postRepository.save(post);
 
         PostEditServiceRequest request = PostEditServiceRequest.builder()
@@ -163,15 +197,15 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목1");
+        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목");
         Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
     }
 
     @Test
-    @DisplayName("글 제목,내용 수정")
-    void postTitleAndContentEdit() {
+    @DisplayName("게시글 제목,내용 수정")
+    void editPostTitleAndContent() {
         // given
-        Post post = createPost("제목1", "내용1");
+        Post post = createPost("제목", "내용");
         postRepository.save(post);
 
         PostEditServiceRequest request = PostEditServiceRequest.builder()
@@ -188,6 +222,35 @@ class PostServiceTest {
 
         Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
         Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void deletePost() {
+        // given
+        Post post = createPost("제목", "내용");
+        postRepository.save(post);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        Assertions.assertThat(postRepository.findAll()).isEmpty();
+        Assertions.assertThat(postRepository.count()).isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제_실패")
+    void deletePost_fail() {
+        // given
+        Post post = createPost("제목", "내용");
+        postRepository.save(post);
+
+        // exception
+        Assertions.assertThatThrownBy(() -> postService.delete(post.getId() + 1L))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("존재하지 않는 글입니다.")
+                .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);
     }
 
     public Post createPost(String title, String content) {

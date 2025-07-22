@@ -1,6 +1,8 @@
 package com.hodol.toy_hodol.service;
 
-import com.hodol.toy_hodol.Repository.PostRepository;
+import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.common.exception.CustomException;
+import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.domain.Post;
 import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
 import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
@@ -27,7 +29,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponse get(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
         return PostResponse.of(post);
     }
 
@@ -40,9 +42,16 @@ public class PostService {
     @Transactional
     public PostResponse edit(Long postId, PostEditServiceRequest request) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         post.edit(request);
         return PostResponse.of(post);
+    }
+
+    public void delete(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+
+        postRepository.delete(post);
     }
 }

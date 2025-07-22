@@ -1,4 +1,4 @@
-package com.hodol.toy_hodol.Repository;
+package com.hodol.toy_hodol.repository;
 
 import com.hodol.toy_hodol.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;

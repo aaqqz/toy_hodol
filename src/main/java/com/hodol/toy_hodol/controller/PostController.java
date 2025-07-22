@@ -22,6 +22,8 @@ public class PostController {
 
     @PostMapping
     public ApiResponse<PostResponse> create(@RequestBody @Valid PostCreateRequest request) {
+        request.validate(); // 유효성 검사
+
         return ApiResponse.success(postService.create(request.toServiceRequest()));
     }
 
@@ -38,5 +40,11 @@ public class PostController {
     @PatchMapping("/{postId}")
     public ApiResponse<PostResponse> edit(@PathVariable Long postId, @RequestBody @Valid PostEditRequest request) {
         return ApiResponse.success(postService.edit(postId, request.toServiceRequest()));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ApiResponse<Void> delete(@PathVariable Long postId) {
+        postService.delete(postId);
+        return ApiResponse.success();
     }
 }

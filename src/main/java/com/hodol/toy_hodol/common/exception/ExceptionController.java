@@ -33,4 +33,20 @@ public class ExceptionController {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(apiResponse);
     }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse> customExceptionHandler(CustomException e) {
+        log.error("API Exception: {}", e.getMessage(), e);
+
+        Map<String, String> errorMap = new HashMap<>();
+        if (e.getFieldName() != null && e.getMessage() != null) {
+            errorMap.put(e.getFieldName(), e.getMessage());
+        }
+
+        ApiResponse apiResponse = ApiResponse.fail(e.getErrorCode(), errorMap);
+
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus().value())
+                .body(apiResponse);
+    }
 }
