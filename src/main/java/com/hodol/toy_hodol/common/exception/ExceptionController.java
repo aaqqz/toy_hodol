@@ -39,8 +39,8 @@ public class ExceptionController {
         log.error("API Exception: {}", e.getMessage(), e);
 
         Map<String, String> errorMap = new HashMap<>();
-        if (e.getFieldName() != null && e.getMessage() != null) {
-            errorMap.put(e.getFieldName(), e.getMessage());
+        if (e.getFieldName() != null && e.getFieldMessage() != null) {
+            errorMap.put(e.getFieldName(), e.getFieldMessage());
         }
 
         ApiResponse apiResponse = ApiResponse.fail(e.getErrorCode(), errorMap);

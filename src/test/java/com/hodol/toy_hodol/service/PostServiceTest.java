@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
 
 @SpringBootTest
@@ -84,7 +85,7 @@ class PostServiceTest {
         Assertions.assertThatThrownBy(() -> postService.get(post.getId() + 1L))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("존재하지 않는 글입니다.")
-                .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);;
+                .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);
     }
 
     @Test
