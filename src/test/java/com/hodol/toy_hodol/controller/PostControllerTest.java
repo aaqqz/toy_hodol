@@ -126,7 +126,6 @@ class PostControllerTest {
     @Test
     @DisplayName("게시글 등록")
     void createPost() throws Exception {
-
         // given
         PostCreateRequest postCreate = PostCreateRequest.builder()
                 .title("제목")
