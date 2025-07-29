@@ -21,9 +21,9 @@ public class WebConfig implements WebMvcConfigurer {
         resolvers.add(paginationResolver);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000");
+//    }
 }
