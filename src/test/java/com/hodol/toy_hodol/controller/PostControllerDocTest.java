@@ -85,8 +85,9 @@ public class PostControllerDocTest {
                 .andExpect(status().isOk())
                 .andDo(document("post-create",
                         requestFields(
-                                fieldWithPath("title").description("제목").optional(),
+                                fieldWithPath("title").description("제목"),
                                 fieldWithPath("content").description("내용")
+//                                fieldWithPath("content").description("내용").optional()
                         ),
                         responseFields(
                                 fieldWithPath("statusCode").description("http status code"),
