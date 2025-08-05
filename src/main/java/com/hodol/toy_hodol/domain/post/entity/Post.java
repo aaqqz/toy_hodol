@@ -1,7 +1,7 @@
-package com.hodol.toy_hodol.domain;
+package com.hodol.toy_hodol.domain.post.entity;
 
-import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
-import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,12 +1,12 @@
-package com.hodol.toy_hodol.service;
+package com.hodol.toy_hodol.domain.post.service;
 
-import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
-import com.hodol.toy_hodol.domain.Post;
-import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
-import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
-import com.hodol.toy_hodol.service.response.PostResponse;
+import com.hodol.toy_hodol.domain.post.entity.Post;
+import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

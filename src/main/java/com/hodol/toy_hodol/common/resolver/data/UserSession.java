@@ -1,11 +1,13 @@
-package com.hodol.toy_hodol.common.data;
+package com.hodol.toy_hodol.common.resolver.data;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
+@Builder
 @RequiredArgsConstructor
 public class UserSession {
 
-    private final String name;
+    public final Long id;
 }

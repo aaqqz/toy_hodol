@@ -5,13 +5,19 @@ spring:
       path: /h2-console
 
   datasource:
-    url: jdbc:h2:mem:toy-hodol
+    url: jdbc:h2:mem:toy-hodol;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
+  sql:
+    init:
+      mode: embedded
+
 
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true  # 이 설정이 핵심

@@ -1,11 +1,11 @@
-package com.hodol.toy_hodol.controller;
+package com.hodol.toy_hodol.domain.post.controller;
 
-import com.hodol.toy_hodol.common.data.UserSession;
+import com.hodol.toy_hodol.common.resolver.data.UserSession;
 import com.hodol.toy_hodol.common.response.ApiResponse;
-import com.hodol.toy_hodol.controller.request.PostCreateRequest;
-import com.hodol.toy_hodol.controller.request.PostEditRequest;
-import com.hodol.toy_hodol.service.PostService;
-import com.hodol.toy_hodol.service.response.PostResponse;
+import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;
+import com.hodol.toy_hodol.domain.post.controller.request.PostEditRequest;
+import com.hodol.toy_hodol.domain.post.service.PostService;
+import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,16 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/foo")
-    public String foo(UserSession userSession) {
-        log.info("########## {}", userSession.getName());
-        return "foo ";
+    public Long foo(UserSession userSession) {
+        log.info("##########1 {}", userSession.getId());
+        log.info("##########2 {}", userSession.id);
+
+        return userSession.getId();
+    }
+
+    @GetMapping("/bar")
+    public String bar() {
+        return "인증이 필요 없는 엔드포인트입니다.";
     }
 
     @PostMapping

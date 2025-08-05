@@ -1,6 +1,6 @@
-package com.hodol.toy_hodol.service.response;
+package com.hodol.toy_hodol.domain.post.service.response;
 
-import com.hodol.toy_hodol.domain.Post;
+import com.hodol.toy_hodol.domain.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 

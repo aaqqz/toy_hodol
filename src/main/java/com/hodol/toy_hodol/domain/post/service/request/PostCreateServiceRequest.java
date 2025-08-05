@@ -1,6 +1,6 @@
-package com.hodol.toy_hodol.service.request;
+package com.hodol.toy_hodol.domain.post.service.request;
 
-import com.hodol.toy_hodol.domain.Post;
+import com.hodol.toy_hodol.domain.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

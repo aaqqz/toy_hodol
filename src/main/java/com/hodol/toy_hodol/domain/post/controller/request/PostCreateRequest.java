@@ -1,8 +1,8 @@
-package com.hodol.toy_hodol.controller.request;
+package com.hodol.toy_hodol.domain.post.controller.request;
 
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
-import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;

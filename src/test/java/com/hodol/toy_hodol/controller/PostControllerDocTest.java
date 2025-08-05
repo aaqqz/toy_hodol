@@ -1,9 +1,9 @@
 package com.hodol.toy_hodol.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodol.toy_hodol.controller.request.PostCreateRequest;
-import com.hodol.toy_hodol.domain.Post;
-import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;
+import com.hodol.toy_hodol.domain.post.entity.Post;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

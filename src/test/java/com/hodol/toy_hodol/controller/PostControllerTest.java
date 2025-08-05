@@ -1,11 +1,11 @@
 package com.hodol.toy_hodol.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
-import com.hodol.toy_hodol.controller.request.PostCreateRequest;
-import com.hodol.toy_hodol.controller.request.PostEditRequest;
-import com.hodol.toy_hodol.domain.Post;
+import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;
+import com.hodol.toy_hodol.domain.post.controller.request.PostEditRequest;
+import com.hodol.toy_hodol.domain.post.entity.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

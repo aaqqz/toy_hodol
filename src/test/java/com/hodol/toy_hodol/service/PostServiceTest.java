@@ -1,12 +1,13 @@
 package com.hodol.toy_hodol.service;
 
-import com.hodol.toy_hodol.repository.PostRepository;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
-import com.hodol.toy_hodol.domain.Post;
-import com.hodol.toy_hodol.service.request.PostCreateServiceRequest;
-import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
-import com.hodol.toy_hodol.service.response.PostResponse;
+import com.hodol.toy_hodol.domain.post.entity.Post;
+import com.hodol.toy_hodol.domain.post.service.PostService;
+import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

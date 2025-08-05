@@ -1,6 +1,6 @@
-package com.hodol.toy_hodol.controller.request;
+package com.hodol.toy_hodol.domain.post.controller.request;
 
-import com.hodol.toy_hodol.service.request.PostEditServiceRequest;
+import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;

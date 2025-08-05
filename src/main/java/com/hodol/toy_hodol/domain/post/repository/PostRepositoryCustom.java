@@ -1,6 +1,6 @@
-package com.hodol.toy_hodol.repository;
+package com.hodol.toy_hodol.domain.post.repository;
 
-import com.hodol.toy_hodol.domain.Post;
+import com.hodol.toy_hodol.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,4 +1,4 @@
-package com.hodol.toy_hodol.service.request;
+package com.hodol.toy_hodol.domain.post.service.request;
 
 import lombok.Builder;
 import lombok.Getter;
