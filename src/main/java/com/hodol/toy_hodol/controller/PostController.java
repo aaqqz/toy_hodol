@@ -1,5 +1,6 @@
 package com.hodol.toy_hodol.controller;
 
+import com.hodol.toy_hodol.common.data.UserSession;
 import com.hodol.toy_hodol.common.response.ApiResponse;
 import com.hodol.toy_hodol.controller.request.PostCreateRequest;
 import com.hodol.toy_hodol.controller.request.PostEditRequest;
@@ -19,6 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+
+    @GetMapping("/foo")
+    public String foo(UserSession userSession) {
+        log.info("########## {}", userSession.getName());
+        return "foo ";
+    }
 
     @PostMapping
     public ApiResponse<PostResponse> create(@RequestBody @Valid PostCreateRequest request) {
