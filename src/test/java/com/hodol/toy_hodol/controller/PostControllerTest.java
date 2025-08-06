@@ -102,7 +102,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글의 제목으 'admin'은 포함될 수 없다")
+    @DisplayName("게시글의 제목으로 'admin'은 포함될 수 없다")
     void createPost_title_invalid_admin() throws Exception {
         // given
         PostCreateRequest postCreate = PostCreateRequest.builder()

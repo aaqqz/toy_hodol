@@ -1,8 +1,11 @@
 package com.hodol.toy_hodol.common.resolver;
 
-import com.hodol.toy_hodol.common.resolver.data.UserSession;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
+import com.hodol.toy_hodol.common.resolver.data.UserSession;
+import com.hodol.toy_hodol.domain.auth.entity.Session;
+import com.hodol.toy_hodol.domain.auth.repository.SessionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -11,7 +14,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
+@RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
+
+    private final SessionRepository sessionRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -25,8 +31,12 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
+        Session session = sessionRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+
+
         return UserSession.builder()
-                .id(1L)
+                .id(session.getUser().getId())
                 .build();
     }
 }
