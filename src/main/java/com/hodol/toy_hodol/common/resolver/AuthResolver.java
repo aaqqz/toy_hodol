@@ -3,10 +3,11 @@ package com.hodol.toy_hodol.common.resolver;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.common.resolver.data.UserSession;
-import com.hodol.toy_hodol.domain.auth.entity.Session;
-import com.hodol.toy_hodol.domain.auth.repository.SessionRepository;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -16,12 +17,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
-    private final SessionRepository sessionRepository;
+    private static final String KEY = "+uXZZBWa5RGr+ATqTRPgYFladpxz6ndXPeOoxL+rPTI=";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -30,29 +34,27 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-//        String accessToken = webRequest.getHeader("Authorization");
-//        if ( accessToken == null || accessToken.isEmpty() ) {
-//            throw new CustomException(ErrorCode.UNAUTHORIZED);
-//        }
-
-        HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest == null){
-            log.error("HttpServletRequest is null");
+        String jws = webRequest.getHeader("Authorization");
+        if ( jws == null || jws.isEmpty() ) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
-        Cookie[] cookies = servletRequest.getCookies();
-        if (cookies.length == 0) {
-            log.error("No cookies found in request");
+
+        try {
+            SecretKey secretKey = Keys.hmacShaKeyFor(KEY.getBytes(StandardCharsets.UTF_8));
+
+            Jws<Claims> claims = Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(jws);
+
+            String userId = claims
+                    .getPayload()
+                    .getSubject();
+
+            return new UserSession(Long.parseLong(userId));
+        } catch (JwtException e) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-        String accessToken = cookies[0].getValue();
-
-        Session session = sessionRepository.findByAccessToken(accessToken)
-                .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
-
-        return UserSession.builder()
-                .id(session.getUser().getId())
-                .build();
     }
 }

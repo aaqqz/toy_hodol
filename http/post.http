@@ -1,5 +1,0 @@
-### 테스트 요청
-
-GET http://localhost:8080/posts/foo
-Content-Type: application/json
-Authorization: qwer
