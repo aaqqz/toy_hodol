@@ -14,10 +14,13 @@ spring:
     init:
       mode: embedded
 
-
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true  # 이 설정이 핵심
+    defer-datasource-initialization: true
+
+jwt:
+  secret-key: +uXZZBWa5RGr+ATqTRPgYFladpxz6ndXPeOoxL+rPTI=
+

@@ -1,6 +1,7 @@
 package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.hodol.toy_hodol.common.response.ApiResponse;
+import com.hodol.toy_hodol.config.AppConfig;
 import com.hodol.toy_hodol.domain.auth.controller.request.AuthLoginRequest;
 import com.hodol.toy_hodol.domain.auth.service.AuthService;
 import com.hodol.toy_hodol.domain.auth.service.response.SessionResponse;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -25,15 +27,16 @@ import java.util.Base64;
 public class AuthController {
 
     private final AuthService authService;
-    private static final String KEY = "+uXZZBWa5RGr+ATqTRPgYFladpxz6ndXPeOoxL+rPTI=";
+    private final AppConfig appConfig;
 
     @PostMapping("/login")
     public ApiResponse<SessionResponse> signin(@RequestBody @Valid AuthLoginRequest request) {
         Long userId = authService.signin(request);
 
-        SecretKey secretKey = Keys.hmacShaKeyFor(KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey secretKey = appConfig.getSecretKey();
         String jws = Jwts.builder()
                 .subject(userId.toString())
+                .issuedAt(new Date())
                 .signWith(secretKey)
                 .compact();
 

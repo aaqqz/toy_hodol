@@ -3,6 +3,7 @@ package com.hodol.toy_hodol.common.resolver;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.common.resolver.data.UserSession;
+import com.hodol.toy_hodol.config.AppConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -25,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
-    private static final String KEY = "+uXZZBWa5RGr+ATqTRPgYFladpxz6ndXPeOoxL+rPTI=";
+    private final AppConfig appConfig;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -33,7 +34,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         String jws = webRequest.getHeader("Authorization");
         if ( jws == null || jws.isEmpty() ) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
@@ -41,7 +42,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(KEY.getBytes(StandardCharsets.UTF_8));
+            SecretKey secretKey = appConfig.getSecretKey();
 
             Jws<Claims> claims = Jwts.parser()
                     .verifyWith(secretKey)

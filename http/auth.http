@@ -11,4 +11,4 @@ Content-Type: application/json
 ### 인증 페이지 요청 - test
 GET http://localhost:8080/posts/foo
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.W19SlsPbKD70Dp6JMIWLmkDxPCRdsq49x_0LJDHUQbU
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzU2NzQxODM3fQ.WnKw4raacIZtce9gEGg107oTn3ffoefxCbkUK3NrO8o
