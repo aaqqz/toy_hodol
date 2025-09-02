@@ -2,7 +2,7 @@ package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.hodol.toy_hodol.common.response.ApiResponse;
 import com.hodol.toy_hodol.config.AppConfig;
-import com.hodol.toy_hodol.domain.auth.controller.request.AuthLoginRequest;
+import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
 import com.hodol.toy_hodol.domain.auth.service.AuthService;
 import com.hodol.toy_hodol.domain.auth.service.response.SessionResponse;
@@ -28,7 +28,7 @@ public class AuthController {
     private final AppConfig appConfig;
 
     @PostMapping("/login")
-    public ApiResponse<SessionResponse> signin(@RequestBody @Valid AuthLoginRequest request) {
+    public ApiResponse<SessionResponse> signin(@RequestBody @Valid SigninRequest request) {
         Long userId = authService.signin(request);
 
         SecretKey secretKey = appConfig.getSecretKey();

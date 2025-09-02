@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AuthLoginRequest {
+public class SigninRequest {
 
     @NotBlank(message = "이메일은 필수입니다.")
     private final String email;
@@ -14,7 +14,7 @@ public class AuthLoginRequest {
     private final String password;
 
     @Builder
-    public AuthLoginRequest(String email, String password) {
+    public SigninRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

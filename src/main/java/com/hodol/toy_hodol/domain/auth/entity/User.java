@@ -32,12 +32,4 @@ public class User {
         this.password = password;
         this.createdAt = LocalDateTime.now();
     }
-
-    public static User signup(SignupServiceRequest request) {
-        return User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .build();
-    }
 }

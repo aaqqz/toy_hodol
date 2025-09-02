@@ -1,11 +1,10 @@
 package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodol.toy_hodol.domain.auth.controller.request.AuthLoginRequest;
+import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
 import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,7 +41,7 @@ class AuthControllerTest {
     void getSessionAfterLogin() throws Exception {
         //given
         createUser();
-        AuthLoginRequest loginRequest = AuthLoginRequest.builder()
+        SigninRequest loginRequest = SigninRequest.builder()
                 .email("test@gmail.com")
                 .password("1234")
                 .build();
