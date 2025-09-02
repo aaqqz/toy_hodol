@@ -14,6 +14,8 @@ public enum ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 글입니다."),
 
     INVALID_SIGNIN_INFORMATION(HttpStatus.UNAUTHORIZED, "로그인 정보가 올바르지 않습니다."),
+    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+
     ;
 
     private final HttpStatus httpStatus;

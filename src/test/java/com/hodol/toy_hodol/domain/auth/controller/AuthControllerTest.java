@@ -2,6 +2,7 @@ package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodol.toy_hodol.domain.auth.controller.request.AuthLoginRequest;
+import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
 import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -38,31 +39,10 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 성공")
-    void login() throws Exception {
-        //given
-        createUser();
-        AuthLoginRequest loginRequest = AuthLoginRequest.builder()
-                .email("test@gmail.com")
-                .password("1234")
-                .build();
-
-        //expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest))
-                )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-        ;
-    }
-
-    @Test
-    @Transactional // todo 좋은 방법은 아닌거 같다
-    @DisplayName("로그인 성공 후 session 응답")
+    @DisplayName("로그인 성공 - session 객체 응답")
     void getSessionAfterLogin() throws Exception {
         //given
-        User user = createUser();
+        createUser();
         AuthLoginRequest loginRequest = AuthLoginRequest.builder()
                 .email("test@gmail.com")
                 .password("1234")
@@ -79,6 +59,29 @@ class AuthControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken", Matchers.notNullValue()))
         ;
     }
+
+    @Test
+    @DisplayName("회원가입")
+    void signup() throws Exception {
+        //given
+        SignupRequest request = SignupRequest.builder()
+                .email("test@gmail.com")
+                .password("1234")
+                .name("name")
+                .build();
+
+        //expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
+        ;
+    }
+
+
 
     // todo jwt 처리로 인한 header Authorization 처리
 //    @Test

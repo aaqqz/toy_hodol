@@ -3,10 +3,10 @@ package com.hodol.toy_hodol.domain.auth.controller;
 import com.hodol.toy_hodol.common.response.ApiResponse;
 import com.hodol.toy_hodol.config.AppConfig;
 import com.hodol.toy_hodol.domain.auth.controller.request.AuthLoginRequest;
+import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
 import com.hodol.toy_hodol.domain.auth.service.AuthService;
 import com.hodol.toy_hodol.domain.auth.service.response.SessionResponse;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Slf4j
@@ -42,4 +40,11 @@ public class AuthController {
 
         return ApiResponse.success(new SessionResponse(jws));
     }
+
+    @PostMapping("/signup")
+    public ApiResponse<Void> signup(@RequestBody SignupRequest request) {
+        authService.signup(request.toServiceRequest());
+        return ApiResponse.success();
+    }
+
 }

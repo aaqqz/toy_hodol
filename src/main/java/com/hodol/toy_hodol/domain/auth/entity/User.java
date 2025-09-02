@@ -1,5 +1,6 @@
 package com.hodol.toy_hodol.domain.auth.entity;
 
+import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,10 +26,18 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder
-    public User(String name, String email, String password) {
+    private User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public static User signup(SignupServiceRequest request) {
+        return User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .build();
     }
 }
