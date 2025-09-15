@@ -1,6 +1,7 @@
 package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
 import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
 import com.hodol.toy_hodol.domain.auth.entity.User;
@@ -30,6 +31,9 @@ class AuthControllerTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void clean() {
@@ -127,7 +131,7 @@ class AuthControllerTest {
         User user = User.builder()
                 .name("test")
                 .email("test@gmail.com")
-                .password("1234")
+                .password(passwordEncoder.encode("1234"))
                 .build();
 
         return userRepository.save(user);

@@ -1,10 +1,9 @@
-package com.hodol.toy_hodol.service;
+package com.hodol.toy_hodol.domain.post.service;
 
-import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.domain.post.entity.Post;
-import com.hodol.toy_hodol.domain.post.service.PostService;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
 import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
 import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
@@ -22,7 +21,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.tuple;
 
 @SpringBootTest
@@ -52,10 +51,10 @@ class PostServiceTest {
         PostResponse postResponse = postService.create(request);
 
         // then
-        Assertions.assertThat(postResponse.getId()).isNotNull();
-        Assertions.assertThat(postRepository.count()).isEqualTo(1L);
-        Assertions.assertThat(postResponse.getTitle()).isEqualTo("제목");
-        Assertions.assertThat(postResponse.getContent()).isEqualTo("내용");
+        assertThat(postResponse.getId()).isNotNull();
+        assertThat(postRepository.count()).isEqualTo(1L);
+        assertThat(postResponse.getTitle()).isEqualTo("제목");
+        assertThat(postResponse.getContent()).isEqualTo("내용");
     }
 
     @Test
@@ -69,10 +68,10 @@ class PostServiceTest {
         PostResponse postResponse = postService.get(post.getId());
 
         // then
-        Assertions.assertThat(postResponse.getId()).isNotNull();
-        Assertions.assertThat(postRepository.count()).isEqualTo(1L);
-        Assertions.assertThat(postResponse.getTitle()).isEqualTo("제목");
-        Assertions.assertThat(postResponse.getContent()).isEqualTo("내용");
+        assertThat(postResponse.getId()).isNotNull();
+        assertThat(postRepository.count()).isEqualTo(1L);
+        assertThat(postResponse.getTitle()).isEqualTo("제목");
+        assertThat(postResponse.getContent()).isEqualTo("내용");
     }
 
     @Test
@@ -83,7 +82,7 @@ class PostServiceTest {
         postRepository.save(post);
 
         // excepted
-        Assertions.assertThatThrownBy(() -> postService.get(post.getId() + 1L))
+        assertThatThrownBy(() -> postService.get(post.getId() + 1L))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("존재하지 않는 글입니다.")
                 .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);
@@ -103,7 +102,7 @@ class PostServiceTest {
         Page<PostResponse> postPage = postService.getPageList(pageable);
 
         // then
-        Assertions.assertThat(postPage.getContent()).hasSize(5)
+        assertThat(postPage.getContent()).hasSize(5)
                 .extracting("title", "content")
                 .containsExactlyInAnyOrder(
                         tuple("제목20", "내용20"),
@@ -112,7 +111,7 @@ class PostServiceTest {
                         tuple("제목17", "내용17"),
                         tuple("제목16", "내용16")
                 );
-        Assertions.assertThat(postPage.getTotalElements()).isEqualTo(20L);
+        assertThat(postPage.getTotalElements()).isEqualTo(20L);
     }
 
     @Test
@@ -129,7 +128,7 @@ class PostServiceTest {
         Page<PostResponse> postPage = postService.getPageList(pageable);
 
         // then
-        Assertions.assertThat(postPage.getContent()).hasSize(5)
+        assertThat(postPage.getContent()).hasSize(5)
                 .extracting("title", "content")
                 .containsExactlyInAnyOrder(
                         tuple("제목15", "내용15"),
@@ -138,7 +137,7 @@ class PostServiceTest {
                         tuple("제목12", "내용12"),
                         tuple("제목11", "내용11")
                 );
-        Assertions.assertThat(postPage.getTotalElements()).isEqualTo(20L);
+        assertThat(postPage.getTotalElements()).isEqualTo(20L);
     }
 
     @Test
@@ -159,8 +158,8 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
-        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용");
+        assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
+        assertThat(changedPost.getContent()).isEqualTo("내용");
     }
 
     @Test
@@ -175,7 +174,7 @@ class PostServiceTest {
                 .build();
 
         // excepted
-        Assertions.assertThatThrownBy(() -> postService.edit(post.getId() + 1L, request))
+        assertThatThrownBy(() -> postService.edit(post.getId() + 1L, request))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("존재하지 않는 글입니다.")
                 .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);
@@ -199,8 +198,8 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목");
-        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
+        assertThat(changedPost.getTitle()).isEqualTo("제목");
+        assertThat(changedPost.getContent()).isEqualTo("내용_변경");
     }
 
     @Test
@@ -222,8 +221,8 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        Assertions.assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
-        Assertions.assertThat(changedPost.getContent()).isEqualTo("내용_변경");
+        assertThat(changedPost.getTitle()).isEqualTo("제목_변경");
+        assertThat(changedPost.getContent()).isEqualTo("내용_변경");
     }
 
     @Test
@@ -237,8 +236,8 @@ class PostServiceTest {
         postService.delete(post.getId());
 
         // then
-        Assertions.assertThat(postRepository.findAll()).isEmpty();
-        Assertions.assertThat(postRepository.count()).isEqualTo(0L);
+        assertThat(postRepository.findAll()).isEmpty();
+        assertThat(postRepository.count()).isEqualTo(0L);
     }
 
     @Test
@@ -249,7 +248,7 @@ class PostServiceTest {
         postRepository.save(post);
 
         // exception
-        Assertions.assertThatThrownBy(() -> postService.delete(post.getId() + 1L))
+        assertThatThrownBy(() -> postService.delete(post.getId() + 1L))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("존재하지 않는 글입니다.")
                 .extracting("errorCode").isEqualTo(ErrorCode.POST_NOT_FOUND);

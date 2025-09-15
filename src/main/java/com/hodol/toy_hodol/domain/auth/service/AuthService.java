@@ -1,5 +1,6 @@
 package com.hodol.toy_hodol.domain.auth.service;
 
+import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
 import com.hodol.toy_hodol.common.exception.CustomException;
 import com.hodol.toy_hodol.common.exception.ErrorCode;
 import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
@@ -7,7 +8,6 @@ import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
 import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // 의존성 주입
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Long signin(SigninRequest request) {
