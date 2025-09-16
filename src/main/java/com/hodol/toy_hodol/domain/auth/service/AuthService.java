@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public void signup(SignupServiceRequest request) {
         userRepository.findByEmail(request.getEmail())
                 .ifPresent(user -> {throw new DuplicateEmailException("이미 존재하는 이메일입니다.");});
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
-        var user = User.builder()
+        User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(encryptedPassword)

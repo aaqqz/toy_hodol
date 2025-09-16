@@ -1,38 +1,32 @@
 package com.hodol.toy_hodol.domain.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
-import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.controller.request.SignupRequest;
-import com.hodol.toy_hodol.domain.auth.entity.User;
-import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
+
+import static com.hodol.toy_hodol.AssertThatUtils.equalsTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
+@Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class AuthControllerTest {
 
-    // todo MockMvcTester 변경
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+    final MockMvcTester mockMvcTester;
+    final ObjectMapper objectMapper;
 
     @Test
     @DisplayName("회원가입")
@@ -43,15 +37,19 @@ class AuthControllerTest {
                 .password("1234")
                 .name("name")
                 .build();
+        String requestJson = objectMapper.writeValueAsString(request);
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
-        ;
+        MvcTestResult result = mockMvcTester.post()
+                .uri("/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
+
+        assertThat(result)
+                .apply(print())
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.statusCode", equalsTo("OK"));
     }
 }

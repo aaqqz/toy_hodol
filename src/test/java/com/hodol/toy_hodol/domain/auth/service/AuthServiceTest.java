@@ -6,30 +6,32 @@ import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
 import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.TestConstructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
 @SpringBootTest
+@RequiredArgsConstructor
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class AuthServiceTest {
 
-    @Autowired
-    AuthService authService;
+    final AuthService authService;
+    final UserRepository userRepository;
+    final PasswordEncoder passwordEncoder;
+    final EntityManager entityManager;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private EntityManager entityManager;
+    // @Transactional 으로 대체 rollback 된다
+//    @BeforeEach
+//    void clean() {
+//        userRepository.deleteAllInBatch();
+//    }
 
     @Test
     @DisplayName("회원가입")

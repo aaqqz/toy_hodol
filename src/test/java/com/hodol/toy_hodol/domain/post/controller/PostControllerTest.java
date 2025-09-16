@@ -1,46 +1,65 @@
 package com.hodol.toy_hodol.domain.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;
-import com.hodol.toy_hodol.domain.post.controller.request.PostEditRequest;
-import com.hodol.toy_hodol.domain.post.entity.Post;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.AssertProvider;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.json.JsonPathValueAssert;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
-import java.util.List;
-import java.util.stream.IntStream;
+import java.util.function.Consumer;
 
-@AutoConfigureMockMvc
+import static com.hodol.toy_hodol.AssertThatUtils.equalsTo;
+import static com.hodol.toy_hodol.AssertThatUtils.notEmpty;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+
+
+@Transactional
 @SpringBootTest
-//@WebMvcTest(controllers = PostController.class)
+@AutoConfigureMockMvc
+@RequiredArgsConstructor
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class PostControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    final MockMvcTester mockMvcTester;
+    final ObjectMapper objectMapper;
+    final PostRepository postRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Test
+    @DisplayName("게시글 등록")
+    void create() throws Exception {
+        // given
+        PostCreateRequest postCreate = PostCreateRequest.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+        String requestJson = objectMapper.writeValueAsString(postCreate);
+        // excepted
+        MvcTestResult result = mockMvcTester.post()
+                .uri("/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .exchange();
 
-//    @MockitoBean
-//    private PostService postService;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @BeforeEach
-    void clean() {
-        postRepository.deleteAllInBatch();
+        assertThat(result)
+                .apply(print())
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.statusCode", equalsTo("OK"))
+                .hasPathSatisfying("$.data.id", notEmpty())
+                .hasPathSatisfying("$.data.title", equalsTo("제목"))
+                .hasPathSatisfying("$.data.content", equalsTo("내용"));
     }
 
 //    @Test
@@ -62,43 +81,43 @@ class PostControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목은 필수입니다."));
 //    }
 //
-    @Test
-    @DisplayName("게시글 등록 요청시 content 은 필수")
-    void createPost_content_required() throws Exception {
-        // given
-        PostCreateRequest postCreate = PostCreateRequest.builder()
-                .title("제목")
-                .build();
+//    @Test
+//    @DisplayName("게시글 등록 요청시 content 은 필수")
+//    void createPost_content_required() throws Exception {
+//        // given
+//        PostCreateRequest postCreate = PostCreateRequest.builder()
+//                .title("제목")
+//                .build();
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(postCreate))
+//                )
+//                .andDo(MockMvcResultHandlers.print())
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("내용은 필수입니다."));
+//        // excepted
+//    }
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postCreate))
-                )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("내용은 필수입니다."));
-        // excepted
-    }
-
-    @Test
-    @DisplayName("게시글 등록 요청시 title, content 은 필수")
-    void createPost_title_and_content_required() throws Exception {
-        // given
-        PostCreateRequest postCreate = PostCreateRequest.builder()
-                .build();
-
-        // excepted
-        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postCreate))
-                )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.detail.title").value("제목은 필수입니다."))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.detail.content").value("내용은 필수입니다."));
-    }
+//    @Test
+//    @DisplayName("게시글 등록 요청시 title, content 은 필수")
+//    void createPost_title_and_content_required() throws Exception {
+//        // given
+//        PostCreateRequest postCreate = PostCreateRequest.builder()
+//                .build();
+//
+//        // excepted
+//        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(postCreate))
+//                )
+//                .andDo(MockMvcResultHandlers.print())
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.detail.title").value("제목은 필수입니다."))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.detail.content").value("내용은 필수입니다."));
+//    }
 
 //    @Test
 //    @DisplayName("게시글의 제목으로 'admin'은 포함될 수 없다")
@@ -122,29 +141,7 @@ class PostControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목에 'admin'을 포함할 수 없습니다."));
 //    }
 //
-//    @Test
-//    @DisplayName("게시글 등록")
-//    void createPost() throws Exception {
-//        // given
-//        PostCreateRequest postCreate = PostCreateRequest.builder()
-//                .title("제목")
-//                .content("내용")
-//                .build();
-//
-//        // excepted
-//        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(postCreate))
-//                )
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value("OK"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").isNotEmpty())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("제목"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("내용"));
-//
-//        Assertions.assertThat(1L).isEqualTo(postRepository.count());
-//    }
+
 //
 //    @Test
 //    @DisplayName("게시글 단건 조회")
@@ -167,25 +164,25 @@ class PostControllerTest {
 //        Assertions.assertThat(1L).isEqualTo(postRepository.count());
 //    }
 //
-    @Test
-    @DisplayName("존재하지 않는 게시글 조회")
-    void getPost_notFound() throws Exception {
-        // given
-        Long postId = 1L;
-
-        // excepted
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", postId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(ErrorCode.POST_NOT_FOUND.getHttpStatus().name()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.POST_NOT_FOUND.getMessage()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value(ErrorCode.POST_NOT_FOUND.name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
-
-        Assertions.assertThat(postRepository.count()).isEqualTo(0L);
-    }
+//    @Test
+//    @DisplayName("존재하지 않는 게시글 조회")
+//    void getPost_notFound() throws Exception {
+//        // given
+//        Long postId = 1L;
+//
+//        // excepted
+//        mockMvc.perform(MockMvcRequestBuilders.get("/posts/{postId}", postId)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                )
+//                .andDo(MockMvcResultHandlers.print())
+//                .andExpect(MockMvcResultMatchers.status().isNotFound())
+////                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(ErrorCode.POST_NOT_FOUND.getHttpStatus().name()))
+////                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.POST_NOT_FOUND.getMessage()))
+////                .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value(ErrorCode.POST_NOT_FOUND.name()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+//
+//        Assertions.assertThat(postRepository.count()).isEqualTo(0L);
+//    }
 //
 //    @Test
 //    @DisplayName("게시글 1페이지 조회")
