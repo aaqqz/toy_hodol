@@ -2,8 +2,6 @@ package com.hodol.toy_hodol.domain.auth.service;
 
 import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
 import com.hodol.toy_hodol.common.exception.DuplicateEmailException;
-import com.hodol.toy_hodol.common.exception.InvalidSigninException;
-import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
 import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
@@ -17,19 +15,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Transactional(readOnly = true)
-    public Long signin(SigninRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidSigninException("로그인 정보가 올바르지 않습니다."));
-
-        boolean matchesPassword = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!matchesPassword) {
-            throw new InvalidSigninException("로그인 정보가 올바르지 않습니다.");
-        }
-
-        return user.getId();
-    }
 
     @Transactional
     public void signup(SignupServiceRequest request) {

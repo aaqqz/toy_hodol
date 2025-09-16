@@ -34,7 +34,7 @@ class PostServiceTest {
     private PostRepository postRepository;
 
     @Autowired
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("게시글 등록")
@@ -253,7 +253,6 @@ class PostServiceTest {
                 .title(title)
                 .content(content)
                 .build();
-
         postRepository.save(post);
 
         entityManager.flush();

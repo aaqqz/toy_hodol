@@ -1,4 +1,4 @@
-package com.hodol.toy_hodol.controller;
+package com.hodol.toy_hodol.domain.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;

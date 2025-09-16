@@ -1,18 +1,21 @@
 package com.hodol.toy_hodol.domain.auth.service;
 
 import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
-import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
+import com.hodol.toy_hodol.common.exception.DuplicateEmailException;
 import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
 import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Transactional
 @SpringBootTest
 class AuthServiceTest {
 
@@ -25,53 +28,11 @@ class AuthServiceTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void clean() {
-        userRepository.deleteAllInBatch();
-    }
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
-    @DisplayName("로그인 성공")
-    void signin() {
-        // given
-        savedUser();
-
-        // given
-//        SignupServiceRequest signupRequest = createSignupServiceRequest();
-//        authService.signup(signupRequest);
-
-        SigninRequest request = SigninRequest.builder()
-                .email("test@test.com")
-                .password("qwer1234")
-                .build();
-
-        // when
-        Long userId = authService.signin(request);
-
-        // then
-        assertThat(userId).isNotNull();
-    }
-
-    @Test
-    @DisplayName("로그인 실패 - 비밀번호 틀림")
-    void signinFailWithInvalidPassword() {
-        // given
-        User savedUser = savedUser();
-
-        SigninRequest request = SigninRequest.builder()
-                .email(savedUser.getEmail())
-                .password("invalidPassword")
-                .build();
-
-        // expected
-//        assertThatThrownBy(() -> authService.signin(request))
-//                .isInstanceOf(CustomException.class)
-//                .hasMessage("로그인 정보가 올바르지 않습니다.")
-//                .extracting("errorCode").isEqualTo(ErrorCode.INVALID_SIGNIN_INFORMATION);
-    }
-
-    @Test
-    @DisplayName("회원가입 성공")
+    @DisplayName("회원가입")
     void signup() {
         // given
         SignupServiceRequest request = createSignupServiceRequest();
@@ -98,22 +59,25 @@ class AuthServiceTest {
         SignupServiceRequest duplicatedRequest = createSignupServiceRequest();
 
         // expected
-//        assertThatThrownBy(() -> authService.signup(duplicatedRequest))
-//                .isInstanceOf(CustomException.class)
-//                .hasMessage("이미 존재하는 이메일입니다.")
-//                .extracting("errorCode").isEqualTo(ErrorCode.DUPLICATED_EMAIL);
+        assertThatThrownBy(() -> authService.signup(duplicatedRequest))
+                .isInstanceOf(DuplicateEmailException.class);
 
         // 여전히 하나의 사용자만 존재
         assertThat(userRepository.count()).isEqualTo(1L);
     }
 
     private User savedUser() {
-        User savedUser = User.builder()
+        User user = User.builder()
                 .name("name")
                 .email("test@test.com")
                 .password(passwordEncoder.encode("qwer1234"))
                 .build();
-        return userRepository.save(savedUser);
+        userRepository.save(user);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        return user;
     }
 
     private static SignupServiceRequest createSignupServiceRequest() {
