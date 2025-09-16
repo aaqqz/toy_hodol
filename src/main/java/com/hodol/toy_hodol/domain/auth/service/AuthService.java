@@ -1,8 +1,8 @@
 package com.hodol.toy_hodol.domain.auth.service;
 
 import com.hodol.toy_hodol.common.crypto.PasswordEncoder;
-import com.hodol.toy_hodol.common.exception.CustomException;
-import com.hodol.toy_hodol.common.exception.ErrorCode;
+import com.hodol.toy_hodol.common.exception.DuplicateEmailException;
+import com.hodol.toy_hodol.common.exception.InvalidSigninException;
 import com.hodol.toy_hodol.domain.auth.controller.request.SigninRequest;
 import com.hodol.toy_hodol.domain.auth.entity.User;
 import com.hodol.toy_hodol.domain.auth.repository.UserRepository;
@@ -21,11 +21,11 @@ public class AuthService {
     @Transactional(readOnly = true)
     public Long signin(SigninRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SIGNIN_INFORMATION));
+                .orElseThrow(() -> new InvalidSigninException("로그인 정보가 올바르지 않습니다."));
 
         boolean matchesPassword = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matchesPassword) {
-            throw new CustomException(ErrorCode.INVALID_SIGNIN_INFORMATION);
+            throw new InvalidSigninException("로그인 정보가 올바르지 않습니다.");
         }
 
         return user.getId();
@@ -34,7 +34,7 @@ public class AuthService {
     @Transactional
     public void signup(SignupServiceRequest request) {
         userRepository.findByEmail(request.getEmail())
-                .ifPresent(user -> {throw new CustomException(ErrorCode.DUPLICATED_EMAIL);});
+                .ifPresent(user -> {throw new DuplicateEmailException("이미 존재하는 이메일입니다.");});
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
 

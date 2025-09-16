@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 public class PostControllerDocTest {
 
-    // todo MockMvcTester 변경
     @Autowired
     private MockMvc mockMvc;
 

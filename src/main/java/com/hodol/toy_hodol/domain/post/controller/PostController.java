@@ -21,19 +21,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/foo")
-    public Long foo(UserSession userSession) {
-        log.info("##########1 {}", userSession.getId());
-        log.info("##########2 {}", userSession.id);
-
-        return userSession.getId();
-    }
-
-    @GetMapping("/bar")
-    public String bar() {
-        return "인증이 필요 없는 엔드포인트입니다.";
-    }
-
     @PostMapping
     public ApiResponse<PostResponse> create(@RequestBody @Valid PostCreateRequest request) {
         request.validate(); // 유효성 검사

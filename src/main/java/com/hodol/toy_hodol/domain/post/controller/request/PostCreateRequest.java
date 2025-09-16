@@ -1,7 +1,6 @@
 package com.hodol.toy_hodol.domain.post.controller.request;
 
-import com.hodol.toy_hodol.common.exception.CustomException;
-import com.hodol.toy_hodol.common.exception.ErrorCode;
+import com.hodol.toy_hodol.common.exception.InvalidRequestException;
 import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -32,7 +31,7 @@ public class PostCreateRequest {
     public void validate() {
         // 제목으로 "admin"이 포함된 제목은 허용하지 않음
         if (this.title.contains("admin")) {
-            throw new CustomException(ErrorCode.INVALID_REQUEST, "title", "제목에 'admin'을 포함할 수 없습니다.");
+            throw new InvalidRequestException("제목에 'admin'을 포함할 수 없습니다.");
         }
     }
 }
