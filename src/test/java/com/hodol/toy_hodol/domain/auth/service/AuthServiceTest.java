@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestConstructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class AuthServiceTest {
 
     final AuthService authService;
@@ -53,7 +51,7 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 실패 - 이메일 중복")
+    @DisplayName("회원가입_실패-이메일 중복")
     void signupFailWithDuplicatedEmail() {
         // given
         savedUser();

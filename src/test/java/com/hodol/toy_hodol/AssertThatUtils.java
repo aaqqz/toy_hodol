@@ -13,6 +13,10 @@ public class AssertThatUtils {
                 Assertions.assertThat(value).isEqualTo(expected);
     }
 
+    public static Consumer<AssertProvider<JsonPathValueAssert>> equalsTo(Integer expected) {
+        return value -> Assertions.assertThat(value).isEqualTo(expected);
+    }
+
     public static Consumer<AssertProvider<JsonPathValueAssert>> notEmpty() {
         return value -> Assertions.assertThat(value).isNotEmpty();
     }

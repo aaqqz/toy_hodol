@@ -1,17 +1,14 @@
 package com.hodol.toy_hodol.domain.post.controller.request;
 
 import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class PostEditRequest {
 
-    @NotBlank(message = "제목은 필수입니다.")
     private final String title;
 
-    @NotBlank(message = "내용은 필수입니다.")
     private final String content;
 
     @Builder

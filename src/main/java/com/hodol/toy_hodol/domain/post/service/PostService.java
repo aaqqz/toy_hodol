@@ -1,8 +1,8 @@
 package com.hodol.toy_hodol.domain.post.service;
 
 import com.hodol.toy_hodol.common.exception.PostNotFoundException;
-import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.domain.post.entity.Post;
+import com.hodol.toy_hodol.domain.post.repository.PostRepository;
 import com.hodol.toy_hodol.domain.post.service.request.PostCreateServiceRequest;
 import com.hodol.toy_hodol.domain.post.service.request.PostEditServiceRequest;
 import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
@@ -56,6 +56,6 @@ public class PostService {
 
     private Post findById(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFoundException::new);
     }
 }

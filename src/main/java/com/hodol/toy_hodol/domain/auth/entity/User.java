@@ -1,14 +1,11 @@
 package com.hodol.toy_hodol.domain.auth.entity;
 
-import com.hodol.toy_hodol.domain.auth.service.request.SignupServiceRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users")

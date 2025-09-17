@@ -1,7 +1,6 @@
 package com.hodol.toy_hodol.domain.post.repository;
 
 import com.hodol.toy_hodol.domain.post.entity.Post;
-import com.hodol.toy_hodol.domain.post.entity.QPost;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.hodol.toy_hodol.domain.post.entity.QPost.*;
+import static com.hodol.toy_hodol.domain.post.entity.QPost.post;
 
 
 @RequiredArgsConstructor

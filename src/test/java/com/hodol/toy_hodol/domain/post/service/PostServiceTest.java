@@ -9,7 +9,6 @@ import com.hodol.toy_hodol.domain.post.service.response.PostResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -27,13 +25,11 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 @SpringBootTest
 @RequiredArgsConstructor
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class PostServiceTest {
 
     final PostService postService;
     final PostRepository postRepository;
     final EntityManager entityManager;
-
 //    @BeforeEach
 //    void clean() {
 //        postRepository.deleteAllInBatch();

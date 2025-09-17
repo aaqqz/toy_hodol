@@ -1,6 +1,5 @@
 package com.hodol.toy_hodol.domain.post.controller;
 
-import com.hodol.toy_hodol.common.resolver.data.UserSession;
 import com.hodol.toy_hodol.common.response.ApiResponse;
 import com.hodol.toy_hodol.domain.post.controller.request.PostCreateRequest;
 import com.hodol.toy_hodol.domain.post.controller.request.PostEditRequest;
@@ -23,7 +22,6 @@ public class PostController {
 
     @PostMapping
     public ApiResponse<PostResponse> create(@RequestBody @Valid PostCreateRequest request) {
-        request.validate(); // 유효성 검사
 
         return ApiResponse.success(postService.create(request.toServiceRequest()));
     }

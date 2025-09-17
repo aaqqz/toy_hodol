@@ -1,19 +1,14 @@
 package com.hodol.toy_hodol.common.exception;
 
-import com.hodol.toy_hodol.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.*;
@@ -27,6 +22,13 @@ public class ExceptionControllerAdvice {
         log.error("API Exception: {}", e.getMessage(), e);
 
         return getProblemDetail(INTERNAL_SERVER_ERROR , e);
+    }
+
+    @ExceptionHandler({PostNotFoundException.class})
+    public ProblemDetail notFoundHandleException(Exception e) {
+        log.error("API Exception: {}", e.getMessage(), e);
+
+        return getProblemDetail(NOT_FOUND , e);
     }
 
     @ExceptionHandler(BindException.class)
